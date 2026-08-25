@@ -61,7 +61,7 @@
 .obi-header.is-scrolled {
   background-color: rgba(248, 245, 245, 0.92);
   backdrop-filter: blur(10px);
-  box-shadow: 0 1px 0 rgba(39, 35, 33, 0.08);
+  box-shadow: var(--shadow-sm);
 }
 .obi-header.is-transparent-start:not(.is-scrolled) {
   background-color: transparent;
