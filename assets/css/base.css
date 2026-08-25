@@ -68,8 +68,6 @@ a { color: inherit; text-decoration: none; }
 .obi-section--tight { padding-top: var(--section-py-tight); padding-bottom: var(--section-py-tight); }
 .obi-section--dark { background: var(--color-black); color: var(--color-cream); }
 .obi-section--dark h1, .obi-section--dark h2, .obi-section--dark h3, .obi-section--dark h4 { color: var(--color-cream); }
-.obi-section--wine { background: var(--color-wine); color: var(--color-cream); }
-.obi-section--wine h1, .obi-section--wine h2, .obi-section--wine h3, .obi-section--wine h4 { color: var(--color-cream); }
 
 .obi-visually-hidden {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
