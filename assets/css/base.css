@@ -31,8 +31,8 @@ h1, h2, h3, h4, h5 {
   color: var(--color-black);
   letter-spacing: 0.01em;
 }
-h1 { font-size: var(--fs-h1); font-weight: 500; }
-h2 { font-size: var(--fs-h2); }
+h1 { font-size: var(--fs-h1); font-weight: 500; letter-spacing: -0.02em; }
+h2 { font-size: var(--fs-h2); letter-spacing: -0.015em; }
 h3 { font-size: var(--fs-h3); }
 h4 { font-size: var(--fs-h4); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
 
