@@ -1,0 +1,114 @@
+/* ==========================================================================
+   Animation system — initial/CSS-driven states.
+   GSAP + ScrollTrigger (assets/js/obi-animations.js) animates .obi-reveal /
+   .obi-reveal-group children from these states into view. Hover treatments
+   (.obi-hover-zoom, .obi-hover-crossfade) are pure CSS transitions.
+   Spec: fade + translateY(20px)->0, 0.7s, cubic-bezier(.21,.47,.32,.98),
+   trigger once, -10% viewport margin, staggered for groups.
+   Reverse-engineered from thehivewomenshealth.com (Framer Motion source).
+   ========================================================================== */
+
+.obi-reveal,
+.obi-reveal-group > * {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.obi-reveal.is-revealed,
+.obi-reveal-group.is-revealed > * {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity var(--dur-reveal) var(--ease-reveal),
+              transform var(--dur-reveal) var(--ease-reveal);
+}
+
+/* Alternating left/right slide-in used on Mission/Vision + narrative sections
+   (mechanism confirmed on IndieLee's dynamic_grid + SoHum's alternating cards) */
+.obi-reveal--left { transform: translateX(-24px); }
+.obi-reveal--left.is-revealed { transform: translateX(0); }
+.obi-reveal--right { transform: translateX(24px); }
+.obi-reveal--right.is-revealed { transform: translateX(0); }
+
+/* Hover: scale/zoom in an overflow-hidden wrapper (NaturalAmor / IndieLee) */
+.obi-hover-zoom { overflow: hidden; display: block; }
+.obi-hover-zoom img { transition: transform var(--dur-zoom) var(--ease-reveal); }
+.obi-hover-zoom:hover img,
+.obi-hover-zoom:focus-within img { transform: scale(1.07); }
+
+/* Hover: crossfade to an alternate image (NaturalAmor) */
+.obi-hover-crossfade { position: relative; overflow: hidden; display: block; }
+.obi-hover-crossfade img { transition: opacity 0.35s ease; }
+.obi-hover-crossfade .obi-img-base { position: relative; z-index: 1; }
+.obi-hover-crossfade .obi-img-alt {
+  position: absolute; inset: 0; z-index: 2; opacity: 0;
+}
+.obi-hover-crossfade:hover .obi-img-alt,
+.obi-hover-crossfade:focus-within .obi-img-alt { opacity: 1; }
+
+/* Card lift on hover */
+.obi-card-lift { transition: transform var(--dur-hover) ease, box-shadow var(--dur-hover) ease; }
+.obi-card-lift:hover, .obi-card-lift:focus-within {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(39, 35, 33, 0.14);
+}
+
+/* Sticky header transparent -> solid transition */
+.obi-header {
+  transition: background-color var(--header-transition) ease,
+              box-shadow var(--header-transition) ease,
+              backdrop-filter var(--header-transition) ease;
+}
+.obi-header.is-scrolled {
+  background-color: rgba(248, 245, 245, 0.92);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 rgba(39, 35, 33, 0.08);
+}
+.obi-header.is-transparent-start:not(.is-scrolled) {
+  background-color: transparent;
+  box-shadow: none;
+}
+.obi-header.is-transparent-start:not(.is-scrolled) .obi-nav a,
+.obi-header.is-transparent-start:not(.is-scrolled) .obi-header__social a,
+.obi-header.is-transparent-start:not(.is-scrolled) .obi-cart-icon { color: var(--color-cream); }
+.obi-header.is-transparent-start:not(.is-scrolled) .obi-header__logo .obi-wordmark--light { display: block; }
+.obi-header.is-transparent-start:not(.is-scrolled) .obi-header__logo .obi-wordmark--dark-svg { display: none; }
+
+/* Ken Burns drift for image-based hero slides (real video drops in later
+   without markup changes — see obi-animations.js initHeroRotator) */
+img.obi-hero__media { transform: scale(1); }
+img.obi-hero__media.is-active { animation: obi-kenburns 12s ease-out forwards; }
+@keyframes obi-kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
+/* Marquee (partner/press logos) — IndieLee */
+.obi-marquee { overflow: hidden; }
+.obi-marquee__track {
+  display: flex; align-items: center; gap: clamp(2.5rem, 6vw, 5rem);
+  width: max-content;
+  animation: obi-marquee 32s linear infinite;
+}
+.obi-marquee:hover .obi-marquee__track { animation-play-state: paused; }
+@keyframes obi-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Count-up target */
+.obi-countup { font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  .obi-reveal,
+  .obi-reveal-group > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .obi-hover-zoom img,
+  .obi-hover-crossfade img,
+  .obi-card-lift,
+  .obi-header { transition: none !important; }
+  .obi-marquee__track { animation: none !important; }
+  img.obi-hero__media.is-active { animation: none !important; transform: none !important; }
+}

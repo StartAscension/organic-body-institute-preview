@@ -1,0 +1,9 @@
+/* Organic Body Institute — main stylesheet
+   Google Fonts (Jost, Open Sans, Cormorant Garamond) are loaded via <link> in
+   base.html.j2 — this mirrors exactly how Elementor's Global Fonts picker
+   auto-enqueues Google Fonts in the real WordPress build, so no change in
+   approach is needed at migration time. */
+@import url("tokens.css");
+@import url("base.css");
+@import url("components.css");
+@import url("animations.css");

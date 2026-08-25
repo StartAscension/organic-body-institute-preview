@@ -1,0 +1,90 @@
+/* ==========================================================================
+   Base / reset
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-black);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img, video { max-width: 100%; display: block; }
+/* No circular crops anywhere — square/rectangle imagery per client preference */
+img, .obi-media { border-radius: var(--radius-none); }
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  line-height: var(--lh-heading);
+  margin: 0 0 0.6em;
+  color: var(--color-black);
+  letter-spacing: 0.01em;
+}
+h1 { font-size: var(--fs-h1); font-weight: 500; }
+h2 { font-size: var(--fs-h2); }
+h3 { font-size: var(--fs-h3); }
+h4 { font-size: var(--fs-h4); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+
+p { margin: 0 0 1.2em; }
+a { color: inherit; text-decoration: none; }
+
+.obi-eyebrow {
+  font-family: var(--font-heading);
+  font-size: var(--fs-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--color-wine);
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 0.9em;
+}
+
+.obi-quote {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.obi-container {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+.obi-container--narrow { max-width: var(--content-max-narrow); }
+
+.obi-section { padding-top: var(--section-py); padding-bottom: var(--section-py); }
+.obi-section--tight { padding-top: var(--section-py-tight); padding-bottom: var(--section-py-tight); }
+.obi-section--dark { background: var(--color-black); color: var(--color-cream); }
+.obi-section--dark h1, .obi-section--dark h2, .obi-section--dark h3, .obi-section--dark h4 { color: var(--color-cream); }
+
+.obi-visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+.obi-skip-link {
+  position: absolute; left: 1rem; top: -60px; z-index: 1000;
+  background: var(--color-black); color: var(--color-cream);
+  padding: 0.75rem 1.25rem; transition: top 0.2s ease;
+  font-family: var(--font-heading); text-transform: uppercase; letter-spacing: 0.08em; font-size: var(--fs-small);
+}
+.obi-skip-link:focus { top: 1rem; }
+
+::selection { background: var(--color-wine); color: var(--color-cream); }
+
+:focus-visible {
+  outline: 2px solid var(--color-wine);
+  outline-offset: 3px;
+}
