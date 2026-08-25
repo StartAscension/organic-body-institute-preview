@@ -70,6 +70,15 @@
 .obi-header.is-transparent-start:not(.is-scrolled) .obi-nav a,
 .obi-header.is-transparent-start:not(.is-scrolled) .obi-header__social a,
 .obi-header.is-transparent-start:not(.is-scrolled) .obi-cart-icon { color: var(--color-cream); }
+
+/* Below 880px .obi-nav becomes a fixed flyout with a solid cream background
+   (see components.css) — it must NOT inherit the cream link color above,
+   or links become invisible (cream-on-cream) when opened pre-scroll on the
+   transparent-header Home page. The toggle button/social icons stay cream
+   since those sit directly over the transparent hero, not inside the flyout. */
+@media (max-width: 880px) {
+  .obi-header.is-transparent-start:not(.is-scrolled) .obi-nav a { color: var(--color-black); }
+}
 .obi-header.is-transparent-start:not(.is-scrolled) .obi-header__logo .obi-wordmark--light { display: block; }
 .obi-header.is-transparent-start:not(.is-scrolled) .obi-header__logo .obi-wordmark--dark-svg { display: none; }
 

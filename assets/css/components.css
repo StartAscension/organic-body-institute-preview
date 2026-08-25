@@ -23,7 +23,14 @@
 /* ---------- Header ---------- */
 .obi-header {
   position: sticky; top: 0; z-index: 100; width: 100%; height: var(--header-h);
+  background-color: var(--color-cream);
 }
+/* Only the Home hero header starts transparent (see .is-transparent-start in
+   animations.css); every other page's header needs its solid background from
+   the first frame, since it otherwise sits directly over the dark
+   .obi-page-header banner beneath it (same -margin-top overlap trick as the
+   hero) with illegible default-black nav text. */
+.obi-header.is-transparent-start { background-color: transparent; }
 .obi-header__inner {
   max-width: var(--content-max); margin: 0 auto; padding: 0 var(--gutter);
   height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
