@@ -50,6 +50,7 @@
   background: currentColor; transition: right var(--dur-hover) ease;
 }
 .obi-nav a:hover::after, .obi-nav a[aria-current]::after { right: 0; }
+.obi-nav a:hover { color: var(--color-wine); transition: color var(--dur-hover) ease; }
 
 .obi-header__right { display: flex; align-items: center; gap: 1.5rem; }
 .obi-header__social { display: flex; gap: 0.9rem; }
