@@ -31,8 +31,18 @@ h1, h2, h3, h4, h5 {
   color: var(--color-black);
   letter-spacing: 0.01em;
 }
-h1 { font-size: var(--fs-h1); font-weight: 500; letter-spacing: -0.02em; }
-h2 { font-size: var(--fs-h2); letter-spacing: -0.015em; }
+/* Major statement headlines (page/section titles) go serif -- Cormorant
+   Garamond, not Jost -- for the editorial-premium pairing (serif display +
+   clean sans body/UI) rather than an all-geometric-sans look. Card titles,
+   nav, buttons, and small tracked labels (h3/h4/.obi-eyebrow) stay Jost. */
+h1, h2 {
+  font-family: var(--font-accent);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+h1 { font-size: var(--fs-h1); }
+h2 { font-size: var(--fs-h2); }
 h3 { font-size: var(--fs-h3); }
 h4 { font-size: var(--fs-h4); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
 

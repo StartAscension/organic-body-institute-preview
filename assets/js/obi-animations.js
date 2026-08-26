@@ -7,6 +7,29 @@
 (function () {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  function initSmoothScroll() {
+    // Buttery inertial scroll (Lenis) -- skipped entirely for
+    // prefers-reduced-motion so those users get plain native scroll, not a
+    // "reduced" version of an effect they asked to avoid. Driven off GSAP's
+    // own ticker (rather than its own rAF loop) and synced to ScrollTrigger
+    // per Lenis's documented GSAP integration, so scroll-reveal triggers
+    // stay accurate to the smoothed scroll position instead of the raw one.
+    if (reduceMotion || typeof Lenis === 'undefined') return;
+    const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    } else {
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+    }
+    window.__obiLenis = lenis;
+  }
+
   function initReveal() {
     if (reduceMotion || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
       document.querySelectorAll('.obi-reveal, .obi-reveal-group').forEach((el) => el.classList.add('is-revealed'));
@@ -213,6 +236,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    initSmoothScroll();
     initReveal();
     initHeader();
     initNavToggle();

@@ -50,6 +50,7 @@
   background: currentColor; transition: right var(--dur-hover) ease;
 }
 .obi-nav a:hover::after, .obi-nav a[aria-current]::after { right: 0; }
+.obi-nav a:hover { color: var(--color-wine); transition: color var(--dur-hover) ease; }
 
 .obi-header__right { display: flex; align-items: center; gap: 1.5rem; }
 .obi-header__social { display: flex; gap: 0.9rem; }
@@ -183,6 +184,29 @@ body.obi-no-scroll { overflow: hidden; }
 @media (max-width: 1080px) { .obi-tiles { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 620px) { .obi-tiles { grid-template-columns: repeat(2, 1fr); } }
 
+/* Asymmetric mosaic variant: one large "hero" tile + a 2x2 grid of smaller
+   tiles beside it, instead of 5 uniform tiles -- an editorial collage
+   rhythm rather than a repeating card grid. */
+.obi-tiles--mosaic {
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, clamp(200px, 22vw, 280px));
+}
+.obi-tiles--mosaic .obi-tile { aspect-ratio: auto; }
+.obi-tiles--mosaic .obi-tile:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+.obi-tiles--mosaic .obi-tile:nth-child(2) { grid-column: 3; grid-row: 1; }
+.obi-tiles--mosaic .obi-tile:nth-child(3) { grid-column: 4; grid-row: 1; }
+.obi-tiles--mosaic .obi-tile:nth-child(4) { grid-column: 3; grid-row: 2; }
+.obi-tiles--mosaic .obi-tile:nth-child(5) { grid-column: 4; grid-row: 2; }
+@media (max-width: 1080px) {
+  .obi-tiles--mosaic { grid-template-columns: repeat(2, 1fr); grid-template-rows: none; }
+  .obi-tiles--mosaic .obi-tile { aspect-ratio: 3/4; }
+  .obi-tiles--mosaic .obi-tile:nth-child(1) { grid-column: span 2; aspect-ratio: 16/9; }
+  .obi-tiles--mosaic .obi-tile:nth-child(2),
+  .obi-tiles--mosaic .obi-tile:nth-child(3),
+  .obi-tiles--mosaic .obi-tile:nth-child(4),
+  .obi-tiles--mosaic .obi-tile:nth-child(5) { grid-column: span 1; grid-row: auto; }
+}
+
 /* ---------- Card grid (Perspectives / Resources / Goods share this shape) ---------- */
 .obi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
 @media (max-width: 980px) { .obi-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -244,6 +268,17 @@ body.obi-no-scroll { overflow: hidden; }
 
 /* ---------- Marquee logos ---------- */
 .obi-marquee__track img { height: 34px; width: auto; filter: grayscale(1); opacity: 0.65; }
+
+.obi-marquee--text { padding: 2.5rem 0; border-top: 1px solid var(--color-grey-pale); border-bottom: 1px solid var(--color-grey-pale); }
+.obi-marquee--text .obi-marquee__track { gap: 0; }
+.obi-marquee__word {
+  font-family: var(--font-accent); font-style: italic; font-weight: 500;
+  font-size: clamp(1.5rem, 3vw, 2.25rem); color: var(--color-black); white-space: nowrap; padding: 0 1.5rem;
+}
+.obi-marquee__sep { color: var(--color-wine); font-size: 1.1rem; opacity: 0.6; }
+.obi-section--dark .obi-marquee--text,
+.obi-section--dark .obi-marquee__word { color: var(--color-cream); }
+.obi-section--dark .obi-marquee--text { border-color: var(--overlay-cream-12); }
 
 /* ---------- Forms ---------- */
 .obi-form { display: grid; gap: 1.1rem; }

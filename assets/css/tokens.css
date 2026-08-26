@@ -48,8 +48,8 @@
   --font-accent: 'Cormorant Garamond', Georgia, serif;
 
   /* --- Type scale --- */
-  --fs-h1: clamp(2.5rem, 5vw + 1rem, 4.5rem);
-  --fs-h2: clamp(2rem, 3vw + 1rem, 3rem);
+  --fs-h1: clamp(2.75rem, 6vw + 1rem, 5.5rem);
+  --fs-h2: clamp(2.25rem, 4vw + 1rem, 3.75rem);
   --fs-h3: clamp(1.5rem, 1.5vw + 1rem, 2rem);
   --fs-h4: clamp(1.15rem, 1vw + 0.8rem, 1.4rem);
   --fs-body-lg: 1.125rem;
