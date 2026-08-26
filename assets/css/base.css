@@ -33,12 +33,19 @@ h1, h2, h3, h4, h5 {
 }
 /* Major statement headlines (page/section titles) go serif -- Cormorant
    Garamond, not Jost -- for the editorial-premium pairing (serif display +
-   clean sans body/UI) rather than an all-geometric-sans look. Card titles,
-   nav, buttons, and small tracked labels (h3/h4/.obi-eyebrow) stay Jost. */
+   clean sans body/UI) rather than an all-geometric-sans look. Nav, buttons,
+   and small tracked labels (h4/.obi-eyebrow) stay Jost; so does bare h3
+   used as plain UI chrome (cart drawer, checkout summary headings). */
 h1, h2 {
   font-family: var(--font-accent);
   font-weight: 500;
   line-height: 1.08;
+  letter-spacing: 0;
+}
+/* Card/tile/job titles are editorial content, not UI chrome -- serif too */
+.obi-card h3, .obi-tile h3, .obi-job h3 {
+  font-family: var(--font-accent);
+  font-weight: 600;
   letter-spacing: 0;
 }
 h1 { font-size: var(--fs-h1); }
