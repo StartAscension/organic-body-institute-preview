@@ -28,6 +28,22 @@
       requestAnimationFrame(raf);
     }
     window.__obiLenis = lenis;
+
+    // Lenis drives its own smooth wheel/touch scrolling, so the native CSS
+    // `scroll-behavior: smooth` (base.css, kept as the no-JS/no-Lenis
+    // fallback) has to be switched off here -- otherwise a same-page anchor
+    // jump triggers the browser's native smooth-scroll AND Lenis's virtual
+    // scroll at once, and the two fight each other into a stuttering scroll.
+    document.documentElement.style.scrollBehavior = 'auto';
+    const headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0;
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href^="#"]');
+      if (!link || link.getAttribute('href').length < 2) return;
+      const target = document.querySelector(link.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      lenis.scrollTo(target, { offset: -headerH });
+    });
   }
 
   function initReveal() {

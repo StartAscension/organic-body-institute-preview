@@ -94,7 +94,7 @@
     const cart = getCart();
 
     if (!cart.length) {
-      body.innerHTML = `<div class="obi-empty-state"><p>${emptyMessage}</p><a href="/goods.html" class="obi-btn obi-btn--outline" style="margin-top:1.5rem;">Browse Goods</a></div>`;
+      body.innerHTML = `<div class="obi-empty-state"><p>${emptyMessage}</p><a href="goods.html" class="obi-btn obi-btn--outline" style="margin-top:1.5rem;">Browse Goods</a></div>`;
       if (footer) footer.style.display = 'none';
       return;
     }

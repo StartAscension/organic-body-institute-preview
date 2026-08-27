@@ -13,10 +13,10 @@
   function renderProductCard(p) {
     return `
       <article class="obi-card obi-reveal">
-        <a href="/product.html?slug=${p.slug}" class="obi-hover-zoom obi-product-card__img-wrap">
+        <a href="product.html?slug=${p.slug}" class="obi-hover-zoom obi-product-card__img-wrap">
           <img src="${p.image}" alt="${p.title}" loading="lazy">
         </a>
-        <h3><a href="/product.html?slug=${p.slug}">${p.title}</a></h3>
+        <h3><a href="product.html?slug=${p.slug}">${p.title}</a></h3>
         <p class="obi-product-card__price">${window.OBI_CART.formatPrice(p.price)}</p>
         <button type="button" class="obi-btn obi-btn--outline obi-add-to-cart" style="width:100%;justify-content:center;"
           data-add-to-cart data-slug="${p.slug}" data-title="${p.title}" data-price="${p.price}" data-image="${p.image}" data-type="${p.type}">Add to Bag</button>
@@ -26,11 +26,11 @@
   function renderPostCard(p) {
     return `
       <article class="obi-card obi-reveal">
-        <a href="/post.html?slug=${p.slug}" class="obi-hover-zoom obi-card__img-wrap">
+        <a href="post.html?slug=${p.slug}" class="obi-hover-zoom obi-card__img-wrap">
           <img src="${p.image}" alt="${p.title}" loading="lazy">
         </a>
         <span class="obi-eyebrow">${p.category}</span>
-        <h3><a href="/post.html?slug=${p.slug}">${p.title}</a></h3>
+        <h3><a href="post.html?slug=${p.slug}">${p.title}</a></h3>
         <p>${p.excerpt}</p>
         <div class="obi-card__meta">${p.meta}</div>
       </article>`;
