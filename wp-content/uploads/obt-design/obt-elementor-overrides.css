@@ -1,0 +1,212 @@
+/* Elementor's core .e-con class re-declares position/z-index/min-height/height/width/
+   overflow/text-align/margin/padding via CSS custom properties (see elementor/assets/css/
+   frontend.min.css), and that stylesheet loads after obt-components.css in the page head.
+   At equal specificity the later rule wins, so these design-system classes lose the cascade
+   on any element that is also an Elementor container (.e-con). This file re-asserts those
+   specific properties with !important, scoped only to the properties .e-con touches. */
+
+.obi-hero { position: relative !important; min-height: 92vh !important; overflow: hidden !important; text-align: center !important; margin-top: calc(var(--header-h) * -1) !important; }
+.obi-hero__media { position: absolute !important; width: 100% !important; height: 100% !important; z-index: 0 !important; }
+.obi-hero__media.is-active { z-index: 1 !important; }
+.obi-hero__overlay { position: absolute !important; z-index: 1 !important; }
+.obi-hero__content { position: relative !important; z-index: 2 !important; padding: 0 var(--gutter) !important; padding-top: var(--header-h) !important; }
+
+.obi-row { display: grid !important; grid-template-columns: 1fr 1fr !important; }
+@media (max-width: 780px) { .obi-row { grid-template-columns: 1fr !important; } }
+
+/* Buttons originally built as plain solid CTAs have their own per-element local
+   background-color (Elementor's local-N CSS), which also loads after obt-components.css
+   and wins the cascade for background-color specifically. */
+.obi-btn--primary { background: var(--color-wine) !important; }
+.obi-btn--outline { background: transparent !important; }
+.obi-btn--outline-cream { background: transparent !important; }
+
+.obi-tiles { display: grid !important; grid-template-columns: repeat(5, 1fr) !important; gap: 1.25rem !important; }
+.obi-tiles--mosaic { grid-template-columns: repeat(4, 1fr) !important; grid-template-rows: repeat(2, clamp(200px, 22vw, 280px)) !important; }
+/* Each tile still carries its pre-mosaic per-element width:280px (Elementor local-17
+   CSS, unconditional - no breakpoint variant), which overrides the grid's 1fr track
+   sizing at every viewport since an explicit width beats grid stretch sizing. */
+.obi-tile { position: relative !important; width: auto !important; max-width: 100% !important; min-width: 0 !important; }
+.obi-tile__img { position: absolute !important; width: 100% !important; height: 100% !important; }
+.obi-tile__scrim { position: absolute !important; }
+.obi-tile__content { position: absolute !important; }
+@media (max-width: 1080px) {
+  .obi-tiles { grid-template-columns: repeat(3, 1fr) !important; }
+  .obi-tiles--mosaic { grid-template-columns: repeat(2, 1fr) !important; grid-template-rows: none !important; }
+}
+@media (max-width: 620px) { .obi-tiles { grid-template-columns: repeat(2, 1fr) !important; } }
+
+/* .obi-tile__content is built as an e-flexbox wrapper (row by default) but the reference
+   relies on block-level stacking (h3/p) - force column stacking to match. */
+.obi-tile__content { display: flex !important; flex-direction: column !important; gap: 0.15em !important; }
+
+.obi-stats { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 2rem !important; text-align: center !important; }
+@media (max-width: 700px) { .obi-stats { grid-template-columns: 1fr !important; gap: 2.5rem !important; } }
+
+/* Testimonial marquee carousel: track needs row flex + width:max-content for the
+   translateX(-50%) loop; cards need fixed width instead of flex-grow; quote paragraph
+   plays the role of the reference's <blockquote> (Elementor paragraph widgets can't
+   render as blockquote - tag choices are limited to p/span). */
+/* Marquee ticker: same .e-con overflow:visible-via-custom-property problem as the
+   testimonial carousel below - without this the track's width:max-content content
+   (12 repeated word/sep spans) expands the whole page's horizontal scroll instead
+   of being clipped to the viewport. */
+.obi-marquee { overflow: hidden !important; }
+
+.obi-testimonial-carousel { overflow: hidden !important; -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent); mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent); }
+.obi-testimonial-carousel__track { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; justify-content: flex-start !important; align-items: stretch !important; width: max-content !important; gap: 2rem !important; animation: obi-testimonial-slide 52s linear infinite; }
+.obi-testimonial-carousel:hover .obi-testimonial-carousel__track, .obi-testimonial-carousel:focus-within .obi-testimonial-carousel__track { animation-play-state: paused; }
+.obi-testimonial { flex: 0 0 auto !important; width: min(380px, 82vw) !important; height: auto !important; background: var(--color-cream-dim); padding: 2.25rem; display: flex !important; flex-direction: column !important; gap: 1.25rem; }
+.obi-testimonial__quote { margin: 0; font-family: var(--font-accent); font-size: 1.2rem; font-style: italic; line-height: 1.5; flex: 1; }
+.obi-testimonial__who { display: flex !important; flex-direction: row !important; align-items: center !important; gap: 0.9rem; }
+.obi-testimonial__who img { width: 48px !important; height: 48px !important; object-fit: cover; }
+.obi-testimonial__who-text { display: flex !important; flex-direction: column !important; }
+
+/* WPForms visual approximation of .obi-form / .obi-field (contact form) and
+   .obi-newsletter-form (footer/newsletter form) — WPForms renders its own markup we
+   don't control field-by-field, so these target WPForms' own classes directly. */
+.obi-form-shell .wpforms-field-container { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 1.1rem !important; }
+.obi-form-shell .wpforms-field-textarea, .obi-form-shell .wpforms-submit-container { grid-column: 1 / -1 !important; }
+.obi-form-shell .wpforms-field { padding: 0 !important; margin: 0 !important; }
+.obi-form-shell .wpforms-field-label, .obi-form-shell .wpforms-field-sublabel, .obi-form-shell legend.wpforms-field-label {
+  font-family: var(--font-heading); font-size: var(--fs-caption); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; display: block;
+}
+.obi-form-shell input[type=text], .obi-form-shell input[type=email], .obi-form-shell textarea {
+  font-family: var(--font-body); font-size: var(--fs-body); padding: 0.85em 1em !important;
+  border: 1px solid var(--color-grey-light) !important; background: var(--color-cream) !important; color: var(--color-black) !important;
+  width: 100% !important; box-sizing: border-box !important;
+}
+.obi-form-shell button[type=submit] {
+  font-family: var(--font-heading) !important; font-size: var(--fs-small) !important; text-transform: uppercase !important; letter-spacing: 0.12em !important; font-weight: 600 !important;
+  padding: 0.95em 2em !important; border: 1px solid transparent !important; background: var(--color-wine) !important; color: var(--color-cream) !important; cursor: pointer;
+}
+@media (max-width: 620px) { .obi-form-shell .wpforms-field-container { grid-template-columns: 1fr !important; } }
+
+/* This section sits on the page's plain light background (unlike the
+   footer's own hand-coded newsletter form, which lives on the dark
+   .obi-footer and has its own separate CSS) - the original version of
+   these rules reused cream-on-transparent colors that only have contrast
+   on a dark background, so the field/button were nearly invisible here. */
+.obi-newsletter-shell { display: flex !important; justify-content: center !important; }
+.obi-newsletter-shell .wpforms-container { max-width: 440px; width: 100%; }
+/* The submit button is a sibling of .wpforms-field-container, not a child
+   of it (WPForms renders <div class="wpforms-field-container">...field...
+   </div><div class="wpforms-submit-container">...button...</div>) - flex
+   the form itself so the field and the button sit in the same row. */
+.obi-newsletter-shell form.wpforms-form {
+  display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important;
+  align-items: stretch !important; width: 100%;
+}
+.obi-newsletter-shell .wpforms-field-container { flex: 1 1 auto; min-width: 0; width: auto !important; }
+.obi-newsletter-shell .wpforms-field { flex: 1 1 auto; min-width: 0; padding: 0 !important; margin: 0 !important; }
+.obi-newsletter-shell .wpforms-field-label { display: none !important; }
+.obi-newsletter-shell input[type=email] {
+  border: 1px solid var(--overlay-black-35) !important; border-right: none !important; background: var(--color-cream) !important; color: var(--color-black) !important;
+  padding: 0.85em 1.1em !important; font-family: var(--font-body); font-size: 0.95rem; width: 100% !important; height: 100%; box-sizing: border-box !important;
+}
+.obi-newsletter-shell input[type=email]::placeholder { color: var(--color-grey-text); opacity: 1; }
+.obi-newsletter-shell input[type=email]:focus { outline: none; border-color: var(--color-wine) !important; }
+.obi-newsletter-shell .wpforms-submit-container { margin: 0 !important; flex: 0 0 auto; }
+.obi-newsletter-shell button[type=submit] {
+  border: 1px solid var(--color-wine) !important; background: var(--color-wine) !important; color: var(--color-cream) !important;
+  padding: 0 1.6em !important; cursor: pointer; font-family: var(--font-heading) !important; text-transform: uppercase !important; letter-spacing: 0.08em !important; font-size: var(--fs-small) !important;
+  height: 100%; white-space: nowrap; transition: background-color 0.2s ease;
+}
+.obi-newsletter-shell button[type=submit]:hover { background: var(--color-black) !important; border-color: var(--color-black) !important; }
+@media (max-width: 400px) {
+  .obi-newsletter-shell input[type=email] { padding: 0.85em 0.8em !important; font-size: 0.85rem; }
+  .obi-newsletter-shell button[type=submit] { padding: 0 0.9em !important; font-size: 0.7rem; }
+}
+
+/* WPForms bug workaround: when 2+ WPForms instances render on one page, the
+   modern Anti-Spam v3 honeypot's "first free field-id" math can coincide
+   with another form's real field position, and its hide-style then clips
+   that unrelated real field by numeric id. The honeypot is always
+   type=text; force any genuinely visible email field back to normal
+   regardless of which numeric id the honeypot landed on this request. */
+#wpforms-form-87 .wpforms-field-email,
+#wpforms-form-88 .wpforms-field-email {
+  position: static !important;
+  overflow: visible !important;
+  display: block !important;
+  height: auto !important;
+  width: 100% !important;
+  z-index: auto !important;
+  padding: 0 !important;
+}
+#wpforms-form-87 .wpforms-field-email input,
+#wpforms-form-88 .wpforms-field-email input {
+  visibility: visible !important;
+}
+
+/* Elementor's atomic Button widget ships its own base style with
+   border-width:0 (Atomic_Button::define_base_styles()), which loads after
+   this stylesheet and wins over components.css's `.obi-btn { border: 1px
+   solid transparent }` base rule - outline buttons rendered with zero
+   visible border regardless of border-color. */
+.obi-btn { border-width: 1px !important; border-style: solid !important; }
+
+/* Contact form fields inherit WPForms' "medium" size preset (~213px fixed
+   max-width) which reads as tiny on a single-column mobile layout even
+   though the grid already stacks to 1fr. */
+.obi-form-shell .wpforms-field-medium,
+.obi-form-shell input,
+.obi-form-shell textarea {
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+@media (max-width: 480px) {
+  .obi-form-shell { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+}
+
+/* Header logo/nav sit directly on the hero video with no backing (matches
+   the reference's own design), so legibility swings with whatever the
+   video frame happens to show underneath. Add a persistent top scrim
+   that doesn't depend on video content. */
+.obi-header.is-transparent-start::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  height: 140px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.42), rgba(0,0,0,0));
+  pointer-events: none;
+  z-index: 0;
+}
+.obi-header.is-transparent-start .obi-header__inner { position: relative; z-index: 1; }
+.obi-header.is-transparent-start .obi-header__logo,
+.obi-header.is-transparent-start .obi-nav a {
+  text-shadow: 0 1px 3px rgba(0,0,0,0.35);
+}
+
+/* .obi-form-shell is align-items:center (needed to center the heading/
+   eyebrow text above the form) which also shrinks flex children to their
+   content width by default - the WPForms shortcode widget was collapsing
+   to ~213px (WPForms' own intrinsic content width) instead of filling the
+   section. Stretch just this child regardless of the parent's alignment. */
+.obi-form-shell .elementor-widget-shortcode {
+  align-self: stretch !important;
+  width: 100% !important;
+}
+.obi-form-shell .elementor-shortcode,
+.obi-form-shell .wpforms-container {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Astra theme ships a global `button { color: #fff }` rule (bundled with
+   its many button-type selectors) that matches ANY <button> element,
+   including our .obi-nav-toggle - since the toggle has no color of its
+   own outside the is-transparent-start:not(.is-scrolled) special case,
+   it fell through to Astra's white default in every other state
+   (scrolled, or any non-transparent page) instead of inheriting black. */
+.obi-nav-toggle { color: var(--color-black) !important; }
+.obi-header.is-transparent-start:not(.is-scrolled) .obi-nav-toggle { color: var(--color-cream) !important; }
+
+/* Testimonial marquee runs a 52s loop tuned for desktop's wider viewport
+   (more cards visible at once); on a narrow mobile screen only ~1.2 cards
+   show at a time, so the same slow pace reads as barely-moving. Speed it
+   up on mobile so the motion is clearly perceptible. */
+@media (max-width: 640px) {
+  .obi-testimonial-carousel__track { animation-duration: 24s !important; }
+}

@@ -1,0 +1,311 @@
+@use '@givewp/css/Safe-Rem/functions' as *;
+
+.interweave {
+    .statusBadge {
+        --color: var(--givewp-shades-white);
+        --bg-color: var(--givewp-shades-black);
+
+        align-items: center;
+        background-color: var(--bg-color);
+        border-radius: 0.75rem;
+        color: var(--color);
+        column-gap: safe-rem(1);
+        display: inline-flex;
+        font-size: 0.75rem;
+        font-weight: 600;
+        justify-content: center;
+        line-height: 1.5;
+        padding: var(--givewp-spacing-1) var(--givewp-spacing-3);
+        text-transform: capitalize;
+        transform: translateY(0.075rem);
+        width: fit-content;
+
+        div,
+        p {
+            font-size: safe-rem(0.75);
+            font-weight: 600;
+            line-height: safe-rem(1.125);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        &--completed,
+        &--complete {
+            --bg-color: var(--givewp-emerald-100);
+            --color: var(--givewp-emerald-900);
+        }
+
+        &--active,
+        &--publish,
+        &--published {
+            --bg-color: var(--givewp-green-100);
+            --color: var(--givewp-green-900);
+        }
+
+        &--archived,
+        &--inactive {
+            --bg-color: var(--givewp-grey-100);
+            --color: var(--givewp-grey-900);
+        }
+
+        &--failing {
+            --bg-color: var(--givewp-yellow-100);
+            --color: var(--givewp-yellow-900);
+        }
+
+        &--failed,
+        &--revoked,
+        &--abandoned,
+        &--cancelled,
+        &--expired {
+            --bg-color: var(--givewp-red-100);
+            --color: var(--givewp-red-900);
+        }
+
+        &--draft {
+            --bg-color: var(--givewp-orange-100);
+            --color: var(--givewp-orange-900);
+        }
+
+        &--pending,
+        &--processing {
+            --bg-color: var(--givewp-blue-100);
+            --color: var(--givewp-blue-900);
+        }
+
+        &--upgraded {
+            --bg-color: var(--givewp-purple-50);
+            --color: var(--givewp-purple-900);
+        }
+
+        &--refunded {
+            --bg-color: var(--givewp-blue-700);
+            --color: var(--givewp-blue-25);
+        }
+
+        &--give_subscription {
+            --bg-color: var(--givewp-green-700);
+            --color: var(--givewp-green-25);
+        }
+
+        &--trash,
+        &--trashed {
+            --bg-color: var(--givewp-red-700);
+            --color: var(--givewp-red-25);
+        }
+    }
+
+    .subscriptionStatus {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+
+        &__container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        &__message {
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            top: -55px;
+            right: 0;
+            max-width: 27.75rem;
+            width: max-content;
+            height: max-content;
+            padding-inline: 1.25rem;
+            font-size: 0.75rem;
+            font-weight: 400;
+            line-height: 2.5rem;
+            border-radius: 2px;
+            background: #ffffff;
+            visibility: hidden;
+            z-index: 999;
+
+            & img {
+                margin-right: 10px;
+            }
+
+            &--exceeded {
+                top: -75px;
+            }
+
+            &--failed, &--exceeded {
+                border: 1px solid #e5301b;
+            }
+
+            &--indefinite {
+                border: 1px solid #69b868;
+            }
+
+            &--limited {
+                border: 1px solid #f49420;
+            }
+
+            &:before {
+                content: '';
+                position: absolute;
+                bottom: -4.775px;
+                right: 6px;
+                display: inline-block;
+                height: 9px;
+                width: 9px;
+                background: #ffffff;
+                transform: rotate(45deg);
+                border-bottom: inherit;
+                border-right: inherit;
+            }
+        }
+    }
+
+    .subscriptionStatus:hover .subscriptionStatus__message {
+        visibility: visible;
+    }
+
+    .badge {
+        --border-width: 1px;
+        --padding-x: calc(var(--givewp-spacing-3) - var(--border-width));
+        --padding-y: calc(var(--givewp-spacing-1) - var(--border-width));
+        align-items: center;
+        background-color: var(--givewp-neutral-25);
+        border-radius: 1.5rem;
+        border: var(--border-width) solid var(--givewp-neutral-600);
+        color: var(--givewp-neutral-900);
+        display: inline-flex;
+        justify-content: center;
+        padding: var(--padding-y) var(--padding-x);
+
+        p {
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    }
+
+    .donorInformation {
+        position: relative;
+        display: flex;
+        flex-flow: column;
+        gap: var(--givewp-spacing-1);
+
+        & > a {
+            color: #2271b1;
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        &__email {
+            font-size: 0.875rem;
+            line-height: 1.43;
+            max-width: calc(100% - 4rem);
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .giveDonationFormsLink {
+        color: #2271b1;
+        display: block;
+        font-size: 1rem;
+        font-weight: 700;
+        max-width: 32ch;
+        overflow: hidden;
+        position: relative;
+        text-decoration: none;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .shortcode {
+        flex-shrink: 1;
+        min-inline-size: 0;
+        inline-size: 100%;
+        color: #2c3338;
+        background-color: #f6f7f7;
+        padding-block: 0.445rem;
+        padding-inline: 1.5rem;
+        text-indent: -1rem;
+        border: 1px solid grey;
+        border-radius: 4px;
+        cursor: text;
+        white-space: nowrap;
+        overflow: hidden;
+
+        &:hover {
+            border-color: #2271b1;
+            border-width: 2px;
+        }
+    }
+
+    .goalProgress {
+        width: 95%;
+        height: 0.5rem;
+        position: relative;
+        background: rgba(238, 238, 238);
+        border-radius: 1.5625rem;
+        overflow: hidden;
+        margin: 0.3125rem 0 0.125rem;
+
+        &--achieved {
+            position: absolute;
+            display: flex;
+            font-size: 0.8rem;
+            padding-block: 6px;
+        }
+
+        & > span {
+            display: block;
+            height: 100%;
+            border-radius: 1.25rem 0.5rem 0.5rem 1.25rem;
+            background-color: rgba(43, 194, 83);
+            position: relative;
+            overflow: hidden;
+        }
+    }
+
+    .subscriptions .date {
+        font-size: safe-rem(0.8);
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .amount {
+        color: var(--givewp-neutral-700);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+}
+
+.idBadge {
+    align-items: center;
+    background-color: var(--givewp-neutral-50);
+    border-radius: var(--givewp-rounded-8);
+    border: 1px solid var(--givewp-neutral-200);
+    color: var(--givewp-neutral-700);
+    display: inline-flex;
+    flex-grow: 0;
+    flex-shrink: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+    padding: calc(0.5 * var(--givewp-spacing-1)) var(--givewp-spacing-2);
+    text-align: center;
+    width: fit-content;
+
+    &::before {
+        content: '#';
+    }
+}

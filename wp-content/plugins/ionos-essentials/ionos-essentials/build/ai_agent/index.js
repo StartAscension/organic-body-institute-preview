@@ -1,0 +1,1 @@
+(()=>{const e=setInterval(()=>{const t=document.querySelector(".extendify-agent");if(!t)return;const n=t.querySelector("button, a");n?(document.querySelector("#extendify-agent-popout-modal")||n.click(),clearInterval(e)):clearInterval(e)},500)})();

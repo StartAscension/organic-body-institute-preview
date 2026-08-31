@@ -1,0 +1,231 @@
+<?php
+
+namespace Give\Donations\Endpoints;
+
+use Exception;
+use Give\Donations\Models\Donation;
+use Give\Framework\Permissions\Facades\UserPermissions;
+use WP_Error;
+use WP_REST_Request;
+use WP_REST_Response;
+
+class DonationActions extends Endpoint
+{
+    /**
+     * @var string
+     */
+    protected $endpoint = 'admin/donations/(?P<action>[\S]+)';
+
+    /**
+     * @inheritDoc
+     *
+     * @since 4.12.0 Remove force parameter from delete action and add trash and untrash actions
+     * @since 4.10.0 Add force parameter to delete action
+     */
+    public function registerRoute()
+    {
+        register_rest_route(
+            'give-api/v2',
+            $this->endpoint,
+            [
+                [
+                    'methods' => ['POST', 'DELETE'],
+                    'callback' => [$this, 'handleRequest'],
+                    'permission_callback' => [$this, 'permissionsCheck'],
+                ],
+                'args' => [
+                    'action' => [
+                        'type' => 'string',
+                        'required' => true,
+                        'enum' => [
+                            'delete',
+                            'trash',
+                            'untrash',
+                            'setStatus',
+                            'resendEmailReceipt',
+                        ],
+                    ],
+                    'ids' => [
+                        'type' => 'string',
+                        'required' => true,
+                        'validate_callback' => function ($ids) {
+                            foreach ($this->splitString($ids) as $id) {
+                                if (!$this->validateInt($id)) {
+                                    return false;
+                                }
+                            }
+
+                            return true;
+                        },
+                    ],
+                    'status' => [
+                        'type' => 'string',
+                        'required' => false,
+                        'enum' => [
+                            'publish', // Completed
+                            'pending',
+                            'processing',
+                            'refunded',
+                            'revoked',
+                            'failed',
+                            'cancelled',
+                            'abandoned',
+                            'preapproval',
+                        ],
+                    ],
+                ],
+            ]
+        );
+    }
+
+    /**
+     * @since 4.14.0 update permission capability to use facade
+     * @since 2.25.2
+     *
+     * @inheritDoc
+     */
+    public function permissionsCheck()
+    {
+        if (!UserPermissions::donations()->canEdit()) {
+            return new WP_Error(
+                'rest_forbidden',
+                __('You don\'t have permission to edit Donations', 'give'),
+                ['status' => $this->authorizationStatusCode()]
+            );
+        }
+
+        return true;
+    }
+
+    /**
+     * @since 4.14.0 update permission capability to use facade
+     * @since 4.12.0 Add trash and untrash actions
+     * @since 4.3.1 add permissions check for delete
+     * @since 2.20.0
+     *
+     * @param WP_REST_Request $request
+     *
+     * @return WP_Error
+     */
+    public function handleRequest(WP_REST_Request $request)
+    {
+        $ids = $this->splitString($request->get_param('ids'));
+        $errors = $successes = [];
+
+        switch ($request->get_param('action')) {
+            case 'delete':
+                if (!UserPermissions::donations()->canDelete()) {
+                    return new WP_Error(
+                        'rest_forbidden',
+                        __('You don\'t have permission to delete Donation', 'give'),
+                        ['status' => $this->authorizationStatusCode()]
+                    );
+                }
+
+                foreach ($ids as $id) {
+                    $donation = Donation::find($id);
+
+                    if (!$donation) {
+                        $errors[] = $id;
+                        continue;
+                    }
+
+                    try {
+                        $donation->delete();
+                        $successes[] = $id;
+                    } catch (Exception $e) {
+                        $errors[] = $id;
+                    }
+                }
+
+                break;
+
+            case 'trash':
+                foreach ($ids as $id) {
+                    $donation = Donation::find($id);
+
+                    if (!$donation) {
+                        $errors[] = $id;
+                        continue;
+                    }
+
+                    try {
+                        $donation->trash();
+                        $successes[] = $id;
+                    } catch (Exception $e) {
+                        $errors[] = $id;
+                    }
+                }
+
+                break;
+
+            case 'untrash':
+                foreach ($ids as $id) {
+                    $donation = Donation::find($id);
+
+                    if (!$donation) {
+                        $errors[] = $id;
+                        continue;
+                    }
+
+                    try {
+                        $donation->unTrash();
+                        $successes[] = $id;
+                    } catch (Exception $e) {
+                        $errors[] = $id;
+                    }
+                }
+
+                break;
+
+            case 'setStatus':
+                if (!UserPermissions::donations()->canEdit()) {
+                    return new WP_Error(
+                        'rest_forbidden',
+                        __('You don\'t have permission to change donation statuses', 'give'),
+                        ['status' => $this->authorizationStatusCode()]
+                    );
+                }
+                foreach ($ids as $id) {
+                    $updated = give_update_payment_status($id, $request->get_param('status'));
+                    $updated ? $successes[] = $id : $errors[] = $id;
+                }
+
+                break;
+
+            case 'resendEmailReceipt':
+                foreach ($ids as $id) {
+                    try {
+                        do_action('give_donation-receipt_email_notification', $id);
+                        $successes[] = $id;
+                    } catch (Exception $e) {
+                        $errors[] = $id;
+                    }
+                }
+
+                break;
+        }
+
+        return new WP_REST_Response([
+            'errors' => $errors,
+            'successes' => $successes
+        ]);
+    }
+
+    /**
+     * Split string
+     *
+     * @param string $ids
+     * @since 2.20.0
+     *
+     * @return string[]
+     */
+    protected function splitString($ids)
+    {
+        if (strpos($ids, ',')) {
+            return array_map('trim', explode(',', $ids));
+        }
+
+        return [trim($ids)];
+    }
+}

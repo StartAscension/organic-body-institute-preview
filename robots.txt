@@ -1,6 +1,0 @@
-# This is a design preview of Organic Body Institute — placeholder content
-# throughout (copy, pricing, testimonials, imagery). Kept out of search
-# indexes until real content and a production launch replace this build.
-# Matches the <meta name="robots" content="noindex, nofollow"> on every page.
-User-agent: *
-Disallow: /

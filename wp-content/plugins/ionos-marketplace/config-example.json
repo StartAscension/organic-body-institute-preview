@@ -1,0 +1,178 @@
+{
+  "data": {
+    "plugins": [
+      {
+        "slug": "ionos-assistant",
+        "custom": true,
+        "name": "IONOS Assistant",
+        "description": "IONOS Assistant will help you complete the first setup of your WordPress in quick and easy steps. It will help you find a theme to start with and add some plugins that will help you with the purpose of your WordPress installation. You can restart it at any time from the admin menu.",
+        "custom_icon_url": "https://s3-de-central.profitbricks.com/web-hosting/ionos/live/assets/icon-assistant-48px.svg",
+        "custom_info_url": "https://s3-de-central.profitbricks.com/web-hosting/ionos/live/ionos-assistant.info.json"
+      },
+      {
+        "slug": "ionos-help-center",
+        "custom": true,
+        "name": "IONOS Help Center",
+        "description": "This plugin links provides you with information and guidance to help you navigate through WordPress administration and find support available at IONOS. The complete set of information is available with activated IONOS login to fetch information form IONOS Help Center.",
+        "custom_icon_url": "https://s3-de-central.profitbricks.com/web-hosting/ionos/live/assets/icon-help-center-48px.svg",
+        "custom_info_url": "https://s3-de-central.profitbricks.com/web-hosting/ionos/live/ionos-help-center.info.json"
+      },
+      {
+        "slug": "ionos-sso",
+        "custom": true,
+        "name": "IONOS SSO",
+        "description": "IONOS Login allows you to login with your IONOS customer ID and password through the IONOS Control Panel login page. You then have an active session in both your WordPress and your Control Panel and can jump easily from one to the other.",
+        "custom_icon_url": "https://s3-de-central.profitbricks.com/web-hosting/ionos/live/assets/icon-sso-48px.svg",
+        "custom_info_url": "https://s3-de-central.profitbricks.com/web-hosting/ionos/live/ionos-sso.info.json"
+      },
+      {
+        "slug": "tablepress"
+      },
+      {
+        "slug": "wpforms-lite"
+      },
+      {
+        "slug": "real-cookie-banner"
+      },
+      {
+        "slug": "jetpack"
+      },
+      {
+        "slug": "cachify"
+      },
+      {
+        "slug": "antispam-bee"
+      },
+      {
+        "slug": "broken-link-checker"
+      },
+      {
+        "slug": "bsk-pdf-manager"
+      },
+      {
+        "slug": "codistoconnect"
+      },
+      {
+        "slug": "contact-form-7"
+      },
+      {
+        "slug": "cookie-law-info"
+      },
+      {
+        "slug": "disable-comments"
+      },
+      {
+        "slug": "gallery-videos"
+      },
+      {
+        "slug": "google-site-kit"
+      },
+      {
+        "slug": "kadence-blocks"
+      },
+      {
+        "slug": "limit-login-attempts-reloaded"
+      },
+      {
+        "slug": "nextgen-gallery"
+      },
+      {
+        "slug": "podlove-podcasting-plugin-for-wordpress"
+      },
+      {
+        "slug": "podlove-subscribe-button"
+      },
+      {
+        "slug": "podlove-web-player"
+      },
+      {
+        "slug": "regenerate-thumbnails-advanced"
+      },
+      {
+        "slug": "shariff"
+      },
+      {
+        "slug": "statify"
+      },
+      {
+        "slug": "the-events-calendar"
+      },
+      {
+        "slug": "tinymce-advanced"
+      },
+      {
+        "slug": "ultimate-member"
+      },
+      {
+        "slug": "webappick-product-feed-for-woocommerce"
+      },
+      {
+        "slug": "wf-cookie-consent"
+      },
+      {
+        "slug": "woocommerce"
+      },
+      {
+        "slug": "woocommerce-novalnet-gateway"
+      },
+      {
+        "slug": "wordpress-seo"
+      },
+      {
+        "slug": "wp-maintenance-mode"
+      },
+      {
+        "slug": "wpforms-lite"
+      },
+      {
+        "slug": "really-simple-ssl"
+      },
+      {
+        "slug": "wordfence"
+      },
+      {
+        "slug": "duplicate-post"
+      },
+      {
+        "slug": "google-analytics-for-wordpress"
+      },
+      {
+        "slug": "autoptimize"
+      }
+    ],
+    "themes": [
+      {
+        "slug": "ionos-theme",
+        "custom_info_url": "https://s3-de-central.profitbricks.com/web-hosting/test/test/ionos-theme.info.json"
+      },
+      {
+        "slug": "airi",
+        "custom_info_url": null
+      },
+      {
+        "slug": "radiate",
+        "custom_info_url": null
+      },
+      {
+        "slug": "kadence",
+        "custom_info_url": null
+      },
+      {
+        "slug": "responsive",
+        "custom_info_url": null
+      },
+      {
+        "slug": "arbutus",
+        "custom_info_url": null
+      },
+      {
+        "slug": "vogue",
+        "custom_info_url": null
+      },
+      {
+        "slug": "vivacious-magazine",
+        "custom_info_url": null
+      }
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'name' => 'ionos/ionos-marketplace',
+        'pretty_version' => '1.0.0+no-version-set',
+        'version' => '1.0.0.0',
+        'reference' => null,
+        'type' => 'wordpress-plugin',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => false,
+    ),
+    'versions' => array(
+        'ionos/ionos-library' => array(
+            'pretty_version' => '3.1.0',
+            'version' => '3.1.0.0',
+            'reference' => '127e10a653d52baff0da8bba87b2515b9f008835',
+            'type' => 'wordpress-dropin',
+            'install_path' => __DIR__ . '/../ionos/ionos-library',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'ionos/ionos-marketplace' => array(
+            'pretty_version' => '1.0.0+no-version-set',
+            'version' => '1.0.0.0',
+            'reference' => null,
+            'type' => 'wordpress-plugin',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'ionos/plugin-state-hook-handler' => array(
+            'pretty_version' => '1.0.1',
+            'version' => '1.0.1.0',
+            'reference' => 'd59d244e291cdc376d724de2d464d623c22267da',
+            'type' => 'wordpress-package',
+            'install_path' => __DIR__ . '/../ionos/plugin-state-hook-handler',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+    ),
+);

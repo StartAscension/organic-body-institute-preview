@@ -1,0 +1,1 @@
+(()=>{"use strict";document.addEventListener("DOMContentLoaded",(()=>{const e=document.querySelector("#give-admin-campaigns-root, #give-admin-donations-root, #give-admin-donors-root, #give-admin-subscriptions-root"),t=document.querySelector("#givewp-bfcm-2025-banner");if(e){const n=e.querySelector("article > header");n&&n.insertAdjacentElement("afterend",t)}}))})();

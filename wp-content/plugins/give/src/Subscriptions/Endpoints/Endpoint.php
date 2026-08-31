@@ -1,0 +1,60 @@
+<?php
+
+namespace Give\Subscriptions\Endpoints;
+
+use Give\API\RestRoute;
+use WP_Error;
+
+abstract class Endpoint implements RestRoute
+{
+    /**
+     * @var string
+     */
+    protected $endpoint;
+
+    /**
+     * @param  string  $value
+     * @since 2.20.0
+     *
+     * @return bool
+     */
+    public function validateInt($value)
+    {
+        return filter_var($value, FILTER_VALIDATE_INT);
+    }
+
+    /**
+     * Check user permissions
+     * @since 4.3.1 updates permissions
+     * @since 2.20.0
+     *
+     * @return bool|WP_Error
+     */
+    public function permissionsCheck()
+    {
+        if (current_user_can('manage_options') || current_user_can('edit_give_payments')) {
+            return true;
+        }
+
+        return new WP_Error(
+            'rest_forbidden',
+            __("You don't have permission to view Subscriptions", 'give'),
+            ['status' => is_user_logged_in() ? 403 : 401]
+        );
+    }
+
+    /**
+     * Sets up the proper HTTP status code for authorization.
+     * @since 2.20.0
+     *
+     * @return int
+     */
+    public function authorizationStatusCode()
+    {
+        if (is_user_logged_in()) {
+            return 403;
+        }
+
+        return 401;
+    }
+}

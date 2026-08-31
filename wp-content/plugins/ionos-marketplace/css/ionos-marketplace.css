@@ -1,0 +1,6 @@
+.plugin-card[class*=ionos-] .column-rating,
+.plugin-card[class*=ionos-] .column-downloaded,
+.plugin-card[class*=woocommerce-german-market-light] .column-rating,
+.plugin-card[class*=woocommerce-german-market-light] .column-downloaded{
+    display: none;
+}

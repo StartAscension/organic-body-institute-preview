@@ -1,0 +1,158 @@
+<?php
+
+namespace Give\Donors;
+
+use Give\DonationForms\Models\DonationForm;
+use Give\Donors\Actions\CreateUserFromDonor;
+use Give\Donors\Actions\LoadDonorAdminOptions;
+use Give\Donors\Actions\SendDonorUserRegistrationNotification;
+use Give\Donors\Actions\UpdateAdminDonorDetails;
+use Give\Donors\CustomFields\Controllers\DonorDetailsController;
+use Give\Donors\Exceptions\FailedDonorUserCreationException;
+use Give\Donors\ListTable\DonorsListTable;
+use Give\Donors\Migrations\AddPhoneColumn;
+use Give\Donors\Models\Donor;
+use Give\Donors\Repositories\DonorNotesRepository;
+use Give\Donors\Repositories\DonorRepositoryProxy;
+use Give\Framework\Migrations\MigrationsRegister;
+use Give\Helpers\Hooks;
+use Give\Log\Log;
+use Give\ServiceProviders\ServiceProvider as ServiceProviderInterface;
+use Give_Donor as LegacyDonor;
+
+/**
+ * @since 2.19.6
+ */
+class ServiceProvider implements ServiceProviderInterface
+{
+    /**
+     * @inheritDoc
+     */
+    public function register()
+    {
+        give()->singleton('donors', DonorRepositoryProxy::class);
+        give()->singleton('donorNotes', DonorNotesRepository::class);
+        give()->singleton(DonorsListTable::class, function () {
+            $listTable = new DonorsListTable();
+            Hooks::doAction('givewp_donors_list_table', $listTable);
+
+            return $listTable;
+        });
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @since 4.14.0 move donor page registration to methods to defer conditionals and DB queries to appropriate hooks.
+     * @since 3.7.0 Register "AddPhoneColumn" migration and add the "give_admin_donor_details_updating" action
+     */
+    public function boot()
+    {
+        $this->registerDonorsAdminPage();
+
+        $this->addCustomFieldsToDonorDetails();
+        $this->enforceDonorsAsUsers();
+
+        give(MigrationsRegister::class)->addMigrations([
+            AddPhoneColumn::class,
+        ]);
+
+        Hooks::addAction('give_admin_donor_details_updating', UpdateAdminDonorDetails::class, '__invoke', 10, 2);
+
+        $this->loadDonorAdminOptions();
+    }
+
+    /**
+     * Register the donors admin page, deferring conditionals and DB queries to appropriate hooks.
+     *
+     * @since 4.14.0
+     */
+    private function registerDonorsAdminPage()
+    {
+        // Register new admin page if user hasn't chosen to use the legacy one
+        add_action('admin_menu', function () {
+            if ($this->shouldShowLegacyDonorsPage()) {
+                return;
+            }
+
+            give(DonorsAdminPage::class)->registerMenuItem();
+        }, 30);
+
+        // Render the "Switch to New View" button on the legacy donors page
+        add_action('admin_head', function () {
+            if (!DonorsAdminPage::isShowing()) {
+                return;
+            }
+
+            if (!$this->shouldShowLegacyDonorsPage()) {
+                return;
+            }
+
+            give(DonorsAdminPage::class)->renderReactSwitch();
+        });
+    }
+
+    /**
+     * @since 4.14.0
+     */
+    private function shouldShowLegacyDonorsPage(): bool
+    {
+        if (DonorsAdminPage::isShowingNewDetailsPage()) {
+            return false;
+        }
+
+        $userId = get_current_user_id();
+
+        return (bool) get_user_meta($userId, '_give_donors_archive_show_legacy', true);
+    }
+
+    /**
+     * @since 3.0.0
+     */
+    private function addCustomFieldsToDonorDetails()
+    {
+        add_action('give_donor_after_tables', static function (LegacyDonor $legacyDonor) {
+            /** @var Donor $donor */
+            $donor = Donor::find($legacyDonor->id);
+
+            echo (new DonorDetailsController())->show($donor);
+        });
+    }
+
+    /**
+     * Hook into the donor creation process to ensure that donors are also users.
+     * @since 3.2.0
+     */
+    protected function enforceDonorsAsUsers()
+    {
+        add_action('givewp_donate_controller_donor_created', function (Donor $donor, $formId) {
+            if (!$donor->userId) {
+                try {
+                    give(CreateUserFromDonor::class)->__invoke($donor);
+
+                    if (DonationForm::find($formId)->settings->registrationNotification) {
+                        give(SendDonorUserRegistrationNotification::class)->__invoke($donor);
+                    }
+                } catch (FailedDonorUserCreationException $e) {
+                    Log::error($e->getLogMessage(), [
+                        'donor' => $donor,
+                        'previous' => $e->getPrevious(),
+                    ]);
+                }
+            }
+        }, 10, 2);
+    }
+
+    /**
+     * @since 4.6.1 Move to admin_enqueue_scripts hook
+     * @since 4.4.0
+     */
+    private function loadDonorAdminOptions()
+    {
+        add_action('admin_enqueue_scripts', function () {
+            if (DonorsAdminPage::isShowingDetailsPage()) {
+                give(LoadDonorAdminOptions::class)();
+            }
+        });
+    }
+}

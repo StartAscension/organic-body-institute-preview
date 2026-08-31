@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",()=>{const e=document.querySelector("#the-list");e&&new MutationObserver(t=>{t.forEach(t=>{t.removedNodes.forEach(t=>{if(1===t.nodeType&&"TR"===t.tagName){const o=t.getAttribute("data-slug");if(o){const t=e.querySelector(`.ionos-wpscan-notice[data-parent-slug="${o}"]`);t&&t.remove()}}})})}).observe(e,{childList:!0})});

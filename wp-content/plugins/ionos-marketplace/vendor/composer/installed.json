@@ -1,0 +1,92 @@
+{
+    "packages": [
+        {
+            "name": "ionos/ionos-library",
+            "version": "3.1.0",
+            "version_normalized": "3.1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.git-wp.server.lan/wp-dev/package/ionos-library.git",
+                "reference": "127e10a653d52baff0da8bba87b2515b9f008835"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.git-wp.server.lan/api/v4/projects/37/packages/composer/archives/ionos/ionos-library.zip?sha=127e10a653d52baff0da8bba87b2515b9f008835",
+                "reference": "127e10a653d52baff0da8bba87b2515b9f008835",
+                "shasum": ""
+            },
+            "require": {
+                "ionos/plugin-state-hook-handler": "^1.0.0"
+            },
+            "require-dev": {
+                "10up/wp_mock": "^1.0",
+                "ionos/php-coding-standard": "^2.0.0",
+                "phpunit/phpunit": "^9.6",
+                "squizlabs/php_codesniffer": "^3.9"
+            },
+            "type": "wordpress-dropin",
+            "installation-source": "dist",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ],
+                "test-coverage": [
+                    "phpdbg -qrr ./vendor/bin/phpunit --coverage-text=coverage"
+                ]
+            },
+            "license": [
+                "GPL"
+            ],
+            "description": "IONOS library for internal WordPress plugins",
+            "install-path": "../ionos/ionos-library"
+        },
+        {
+            "name": "ionos/plugin-state-hook-handler",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.git-wp.server.lan/wp-dev/package/plugin-state-hook-handler.git",
+                "reference": "d59d244e291cdc376d724de2d464d623c22267da"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.git-wp.server.lan/api/v4/projects/84/packages/composer/archives/ionos/plugin-state-hook-handler.zip?sha=d59d244e291cdc376d724de2d464d623c22267da",
+                "reference": "d59d244e291cdc376d724de2d464d623c22267da",
+                "shasum": ""
+            },
+            "require-dev": {
+                "ionos/php-coding-standard": "^1.0.0"
+            },
+            "type": "wordpress-package",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Ionos\\PluginStateHookHandler\\": "src/"
+                }
+            },
+            "scripts": {
+                "phpcs": [
+                    "phpcs -s ."
+                ],
+                "phpcbf": [
+                    "phpcbf ."
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Florian Brinkmann",
+                    "email": "florian.brinkmann@ionos.com"
+                }
+            ],
+            "install-path": "../ionos/plugin-state-hook-handler"
+        }
+    ],
+    "dev": false,
+    "dev-package-names": []
+}

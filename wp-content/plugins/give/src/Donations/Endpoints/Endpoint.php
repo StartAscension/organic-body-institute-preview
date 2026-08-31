@@ -1,0 +1,62 @@
+<?php
+
+namespace Give\Donations\Endpoints;
+
+use Give\API\RestRoute;
+use Give\Framework\Permissions\Facades\UserPermissions;
+use WP_Error;
+
+abstract class Endpoint implements RestRoute
+{
+    /**
+     * @var string
+     */
+    protected $endpoint;
+
+    /**
+     * @param  string  $value
+     * @since 2.20.0
+     *
+     * @return bool
+     */
+    public function validateInt($value)
+    {
+        return filter_var($value, FILTER_VALIDATE_INT);
+    }
+
+    /**
+     * Check user permissions
+     * @since 4.14.0 update permission capability to use facade
+     * @since 4.3.1 update permissions
+     * @since 2.20.0
+     *
+     * @return bool|WP_Error
+     */
+    public function permissionsCheck()
+    {
+        if (UserPermissions::donations()->canView()) {
+            return true;
+        }
+
+        return new WP_Error(
+            'rest_forbidden',
+            __("You don't have permission to view Donations", 'give'),
+            ['status' => $this->authorizationStatusCode()]
+        );
+    }
+
+    /**
+     * Sets up the proper HTTP status code for authorization.
+     * @since 2.20.0
+     *
+     * @return int
+     */
+    public function authorizationStatusCode()
+    {
+        if (is_user_logged_in()) {
+            return 403;
+        }
+
+        return 401;
+    }
+}

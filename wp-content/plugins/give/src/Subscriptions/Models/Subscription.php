@@ -1,0 +1,387 @@
+<?php
+
+namespace Give\Subscriptions\Models;
+
+use DateTime;
+use Exception;
+use Give\Campaigns\Models\Campaign;
+use Give\Donations\Models\Donation;
+use Give\Donors\Models\Donor;
+use Give\Framework\Models\Contracts\ModelCrud;
+use Give\Framework\Models\Contracts\ModelHasFactory;
+use Give\Framework\Models\Model;
+use Give\Framework\Models\ModelQueryBuilder;
+use Give\Framework\Models\ValueObjects\Relationship;
+use Give\Framework\PaymentGateways\PaymentGateway;
+use Give\Framework\Support\ValueObjects\Money;
+use Give\Subscriptions\Actions\GenerateNextRenewalForSubscription;
+use Give\Subscriptions\Actions\CalculateProjectedAnnualRevenue;
+use Give\Subscriptions\DataTransferObjects\SubscriptionQueryData;
+use Give\Subscriptions\Factories\SubscriptionFactory;
+use Give\Subscriptions\ValueObjects\SubscriptionMode;
+use Give\Subscriptions\ValueObjects\SubscriptionPeriod;
+use Give\Subscriptions\ValueObjects\SubscriptionStatus;
+
+
+/**
+ * Class Subscription
+ *
+ * @since 4.11.0 added campaign ID property
+ * @since 4.10.0 added campaign relationship
+ * @since 2.23.0 added the renewsAt property
+ * @since 2.19.6
+ *
+ * @property int $id
+ * @property int $donationFormId
+ * @property int $campaignId
+ * @property DateTime $createdAt
+ * @property DateTime $renewsAt The date the subscription will renew next
+ * @property int $donorId
+ * @property SubscriptionPeriod $period
+ * @property int $frequency
+ * @property int $installments The total number of installments for the subscription; discontinues after this number of installments
+ * @property string $transactionId
+ * @property SubscriptionMode $mode
+ * @property Money $amount
+ * @property Money $feeAmountRecovered
+ * @property SubscriptionStatus $status
+ * @property string $gatewayId
+ * @property string $gatewaySubscriptionId
+ * @property Donor $donor
+ * @property Donation[] $donations
+ * @property float $projectedAnnualRevenue
+ * @property ?Campaign $campaign
+ */
+class Subscription extends Model implements ModelCrud, ModelHasFactory
+{
+    /**
+     * @inheritdoc
+     */
+    protected $properties = [
+        'id' => 'int',
+        'donationFormId' => 'int',
+        'campaignId' => 'int',
+        'createdAt' => DateTime::class,
+        'renewsAt' => DateTime::class,
+        'donorId' => 'int',
+        'period' => SubscriptionPeriod::class,
+        'frequency' => 'int',
+        'installments' => ['int', 0],
+        'transactionId' => 'string',
+        'mode' => SubscriptionMode::class,
+        'amount' => Money::class,
+        'feeAmountRecovered' => Money::class,
+        'status' => SubscriptionStatus::class,
+        'gatewaySubscriptionId' => ['string', ''],
+        'gatewayId' => 'string',
+        'projectedAnnualRevenue' => Money::class,
+    ];
+
+    /**
+     * @inheritdoc
+     */
+    protected $relationships = [
+        'donor' => Relationship::BELONGS_TO,
+        'donations' => Relationship::HAS_MANY,
+        'notes' => Relationship::HAS_MANY,
+        'campaign' => Relationship::BELONGS_TO,
+    ];
+
+    /**
+     * Find subscription by ID
+     *
+     * @since 2.19.6
+     *
+     * @param int $id
+     *
+     * @return Subscription|null
+     */
+    public static function find($id)
+    {
+        return give()->subscriptions->getById($id);
+    }
+
+    /**
+     * @since 2.19.6
+     *
+     * @return ModelQueryBuilder<Donor>
+     */
+    public function donor(): ModelQueryBuilder
+    {
+        return give()->donors->queryById($this->donorId);
+    }
+
+    /**
+     * @since 2.19.6
+     *
+     * @return ModelQueryBuilder<Donation>
+     */
+    public function donations(): ModelQueryBuilder
+    {
+        return give()->donations->queryBySubscriptionId($this->id);
+    }
+
+    /**
+     * @since 4.8.0
+     *
+     * @return ModelQueryBuilder<SubscriptionNote>
+     */
+    public function notes(): ModelQueryBuilder
+    {
+        return give()->subscriptions->notes->queryBySubscriptionId($this->id);
+    }
+
+    /**
+     * Get Subscription notes
+     *
+     * @deprecated Access notes via $subscription->notes()->getAll() instead.
+     * @since 2.19.6
+     *
+     * @return object[]
+     */
+    public function getNotes(): array
+    {
+        _give_deprecated_function(__METHOD__, '4.6.0', '$subscription->notes()->getAll()');
+
+        return give()->subscriptions->getNotesBySubscriptionId($this->id);
+    }
+
+    /**
+     * Returns the subscription amount the donor "intended", which means it is the amount without recovered fees. So if the
+     * donor paid $100, but the donation was charged $105 with a $5 fee, this method will return $100.
+     *
+     * @since 2.20.0
+     */
+    public function intendedAmount(): Money
+    {
+        return $this->feeAmountRecovered === null
+            ? $this->amount
+            : $this->amount->subtract($this->feeAmountRecovered);
+    }
+
+    /**
+     * Bumps the subscription's renewsAt date to the next renewal date.
+     *
+     * @return void
+     */
+    public function bumpRenewalDate()
+    {
+        $this->renewsAt = give(GenerateNextRenewalForSubscription::class)(
+            $this->period,
+            $this->frequency,
+            $this->renewsAt
+        );
+    }
+
+    /**
+     * Returns the donation that began the subscription.
+     *
+     * @since 4.8.0 Returns null if no initial donation found.
+     * @since 2.23.0
+     */
+    public function initialDonation(): ?Donation
+    {
+        $initialDonationId = give()->subscriptions->getInitialDonationId($this->id);
+
+        if (!$initialDonationId) {
+            return null;
+        }
+
+        return Donation::find(give()->subscriptions->getInitialDonationId($this->id));
+    }
+
+    /**
+     * @since 2.20.0 return mutated model instance
+     * @since 2.19.6
+     *
+     * @throws Exception
+     */
+    public static function create(array $attributes): Subscription
+    {
+        $subscription = new static($attributes);
+        $subscription->save();
+
+        return $subscription;
+    }
+
+    /**
+     * @since 3.20.0
+     * @throws Exception
+     */
+    public function createRenewal(array $attributes = []): Donation
+    {
+        return give()->subscriptions->createRenewal($this, $attributes);
+    }
+
+    /**
+     * @since 3.20.0
+     */
+    public function shouldCreateRenewal(): bool
+    {
+        if (!$this->status->isActive()) {
+            return false;
+        }
+
+        return $this->isIndefinite() || $this->totalDonations() < $this->installments;
+    }
+
+    /**
+     * @since 3.20.0
+     */
+    public function totalDonations(): int
+    {
+        return $this->donations()->count();
+    }
+
+    /**
+     * @since 3.20.0
+     */
+    public function shouldEndSubscription(): bool
+    {
+        if ($this->isIndefinite()) {
+            return false;
+        }
+
+        return $this->totalDonations() >= $this->installments;
+    }
+
+    /**
+     * @since 2.20.0 mutate model in repository and return void
+     * @since 2.19.6
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function save()
+    {
+        if (!$this->id) {
+            give()->subscriptions->insert($this);
+        } else {
+            give()->subscriptions->update($this);
+        }
+    }
+
+    /**
+     * @since 2.19.6
+     *
+     * @throws Exception
+     */
+    public function delete(): bool
+    {
+        return give()->subscriptions->delete($this);
+    }
+
+    /**
+     * @since 4.8.0
+     */
+    public function trash(): bool
+    {
+        return give()->subscriptions->trash($this);
+    }
+
+    /**
+     * @since 4.12.0
+     */
+    public function unTrash(): bool
+    {
+        return give()->subscriptions->unTrash($this);
+    }
+
+    /**
+     * @since 2.20.0
+     *
+     * @param bool $force Set to true to ignore the status of the subscription
+     *
+     * @throws Exception
+     */
+    public function cancel(bool $force = false)
+    {
+        if (!$force && $this->status->isCancelled()) {
+            return;
+        }
+
+        $this->gateway()->cancelSubscription($this);
+    }
+
+    /**
+     * @since 2.24.0
+     */
+    public function isIndefinite(): bool
+    {
+        return $this->installments === 0;
+    }
+
+    /**
+     * @since 2.24.0
+     *
+     * @return int|float
+     */
+    public function remainingInstallments()
+    {
+        return $this->isIndefinite() ? INF : ($this->installments - $this->donations()->count());
+    }
+
+    /**
+     * @since 2.24.0
+     *
+     * @return boolean
+     */
+    public function hasExceededTheMaxInstallments(): bool
+    {
+        return 0 > $this->remainingInstallments();
+    }
+
+    /**
+     * @since 2.19.6
+     *
+     * @return ModelQueryBuilder<Subscription>
+     */
+    public static function query(): ModelQueryBuilder
+    {
+        return give()->subscriptions->prepareQuery();
+    }
+
+    /**
+     * @since 2.19.6
+     *
+     * @param object $object
+     */
+    public static function fromQueryBuilderObject($object): Subscription
+    {
+        return SubscriptionQueryData::fromObject($object)->toSubscription();
+    }
+
+    /**
+     * @return PaymentGateway
+     */
+    public function gateway(): PaymentGateway
+    {
+        return give()->gateways->getPaymentGateway($this->gatewayId);
+    }
+
+    /**
+     * @since 2.19.6
+     */
+    public static function factory(): SubscriptionFactory
+    {
+        return new SubscriptionFactory(static::class);
+    }
+
+    /**
+     * @since 4.8.0
+     */
+    public function projectedAnnualRevenue(): Money
+    {
+        return give(CalculateProjectedAnnualRevenue::class)($this);
+    }
+
+    /**
+     * @since 4.10.0
+     *
+     * @return ModelQueryBuilder<Campaign>
+     */
+    public function campaign(): ModelQueryBuilder
+    {
+        return give()->campaigns->queryByFormId($this->donationFormId);
+    }
+}
